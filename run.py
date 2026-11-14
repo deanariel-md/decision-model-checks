@@ -18,8 +18,8 @@ DECISION_MODELS = ['liquid/d1-ultra', 'perplexity/pplx-decider-v1.2', 'inception
                    'typesafe/jev-1.13', 'jaredpalmer/kev-4b', 'cloudflare/clef-omni', 'perplexity/pplx-decider-flash-v1.2',
                    'microsoft/microsoft-decision-1', 'nace-ai/drex-v1.5', 'nace-ai/drex-v2.0', 'cloudflare/clef-flash', 'respan/span-02', 'scaledown/classify-1']
 LLMS = ['openai/gpt-6.1-sol', 'anthropic/claude-opus-5.5', 'google/gemini-4-argon', 'deepseek/deepseek-v4.1-flash-1017']
-LIST_PRICE = {'anthropic/claude-opus-5.5': (4e-6, 20e-6), 'openai/gpt-6.1-sol': (2e-6, 10e-6), 'google/gemini-4-argon': (2e-6, 10e-6),
-              'deepseek/deepseek-v4.1-flash-1017': (0.15e-6, 0.6e-6)}   # US$ per input and output token; LLM cost is priced from tokens at these rates
+LIST_PRICE = {'anthropic/claude-opus-5.5': (4e-6, 20e-6), 'openai/gpt-6.1-sol': (2e-6, 10e-6), 'google/gemini-4-argon': (2e-6, 10e-6)}
+# US$ per input and output token at list price; other leading LLMs (DeepSeek V4.1 Flash) are costed at the price the API reports
 TASKS = ['blind', 'read', 'judge', 'read_sentence', 'judge_sentence', 'stance']
 _tl = threading.local()
 
@@ -64,8 +64,11 @@ def call_llm(model, req, key):
     text = (resp['choices'][0]['message'].get('content') or '')
     out = P.parse_llm(text, req)
     u = resp.get('usage', {})
-    pin, pout = LIST_PRICE.get(model, (0, 0))
-    out['cost'] = pin * (u.get('prompt_tokens') or 0) + pout * (u.get('completion_tokens') or 0)
+    if model in LIST_PRICE:
+        pin, pout = LIST_PRICE[model]
+        out['cost'] = pin * (u.get('prompt_tokens') or 0) + pout * (u.get('completion_tokens') or 0)
+    else:
+        out['cost'] = u.get('cost')
     if not out.get('choice') and not out.get('answer'):
         return {'error': 'unparsed reply', 'raw': text}
     return dict(out, raw=text)

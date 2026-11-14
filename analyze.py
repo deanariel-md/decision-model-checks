@@ -1,4 +1,5 @@
-"""Scores the stored checker outputs and writes Tables 1 and 2, the shift towards the answer and the paired differences.
+"""Scores the stored checker outputs and writes the results tables (errors flagged and false alarms; answers flagged,
+errors flagged and model cost per 1000 answers), the shift towards the answer and the paired differences.
 
   python analyze.py [--data data] [--runs runs] [--out results] [--nboot 2000]
 
@@ -215,10 +216,10 @@ def main():
     if (M.coverage < 1).any(): print('Warning: incomplete coverage for', M[M.coverage < 1][['model', 'task', 'ctx', 'coverage']].to_string(index=False))
     F = {k: pd.DataFrame(v) for k, v in F.items()}
     t1, t2 = table1(M), table2(M, A, R)
-    open(os.path.join(a.out, 'table1.md'), 'w', encoding='utf-8').write(
-        '**Table 1: Errors flagged and false alarms, by checker, task and guideline context**\n\n' + t1 + '\n')
-    open(os.path.join(a.out, 'table2.md'), 'w', encoding='utf-8').write(
-        '**Table 2: Answers flagged, errors flagged and model cost per 1000 answers**\n\n' + t2 + '\n')
+    open(os.path.join(a.out, 'errors_flagged.md'), 'w', encoding='utf-8').write(
+        '**Errors flagged and false alarms, by checker, task and guideline context**\n\n' + t1 + '\n')
+    open(os.path.join(a.out, 'per_1000_answers.md'), 'w', encoding='utf-8').write(
+        '**Answers flagged, errors flagged and model cost per 1000 answers**\n\n' + t2 + '\n')
     D = []
     for kind, _ in KINDS:
         for ctx in CTXS:

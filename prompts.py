@@ -1,8 +1,8 @@
-"""Every request the study sent to a checker, as text.
+"""The requests of the study's main tasks, as sent to a checker.
 
 A request is built once from the task, the guideline context setting and the case or answer, then rendered for a
 decision model (JSON body for the decision-model API) or for a leading LLM (one prompt, JSON reply).
-Question, option and heading wording is as sent in the study.
+Question, option and heading wording is as sent in the study. The robustness variants are worded in the paper's supplementary appendix.
 """
 import json
 import re
@@ -24,7 +24,8 @@ SENTENCE = {'act': 'Recommend {n} for this patient.', 'restrain': 'Recommend aga
 
 
 def guideline_prefix(path):
-    """The guideline context: 53 Choosing Wisely recommendations, placed before the case."""
+    """The guideline context: 53 recommendations, one per line and numbered (the 15 the cases are built on and 38 from
+    Choosing Wisely Canada), placed before the state."""
     return 'Practice guidance:\n' + open(path, encoding='utf-8').read().strip() + '\n\n'
 
 
