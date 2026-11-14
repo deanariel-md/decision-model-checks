@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Blind AI second opinions on clinical LLM answers: code and example data"
+version: 1.0.0
+date-released: 2026-11-14
+license: MIT
+repository-code: "https://github.com/deanariel-md/decision-model-checks"
+authors:
+  - family-names: Ariel
+    given-names: Dean
+    orcid: "https://orcid.org/0009-0003-8552-104X"
+  - family-names: Laban
+    given-names: Guy
+  - family-names: Endelman
+    given-names: Stav
+  - family-names: Cohen
+    given-names: Seffi
